@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Your existing styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            width: 30%;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #333;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            background-color: brown;
+        }
+
+        button.tag {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+            justify-content: center;
+        }
+
+        button.tag:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+        }
+
+        .modal-content .heading {
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .field {
+            text-align: left;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button.modal-close,
+        button.modal-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button.modal-close:hover,
+        button.modal-submit:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <button type="button" class="tag" onclick="openModal()">Create Post</button>
+
+    <div id="cardContainer"></div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-content">
+            <h2 class="heading">Create Post</h2>
+            <label for="title" class="field">Title:</label>
+            <input type="text" id="title" name="title" placeholder="Enter title">
+
+            <label for="body" class="field">Body:</label>
+            <textarea id="body" name="body" rows="8" placeholder="Enter body"></textarea>
+
+            <button class="modal-close" type="button" onclick="closeModal()">Close</button>
+            <button class="modal-submit" type="button" onclick="submitData()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        let currentCard; // To store the card being updated
+
+        function handleUpdate(event) {
+            console.log('Update clicked');
+            var card = event.target.closest('.card');
+            var title = card.querySelector('h4').textContent;
+            var body = card.querySelector('p').textContent;
+
+            // Populate the modal with existing data
+            document.getElementById('title').value = title;
+            document.getElementById('body').value = body;
+
+            // Save the current card for later update
+            currentCard = card;
+
+            openModal();
+        }
+
+        function handleDelete(event) {
+            console.log('Delete clicked');
+            var card = event.target.closest('.card');
+
+            // Show confirmation alert
+            var isConfirmed = confirm('Are you sure you want to delete this post?');
+
+            if (isConfirmed) {
+                card.remove();
+
+                // Show toast message
+                showToast('Data deleted successfully');
+            }
+        }
+
+        function showToast(message) {
+            var toast = document.createElement('div');
+            toast.classList.add('toast');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Remove the toast after 3 seconds
+            setTimeout(function () {
+                toast.remove();
+            }, 3000);
+        }
+
+        function openModal() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+            resetForm();
+        }
+
+        function submitData() {
+            var title = document.getElementById('title').value;
+            var body = document.getElementById('body').value;
+
+            if (currentCard) {
+                // Update existing card
+                currentCard.querySelector('h4').textContent = title;
+                currentCard.querySelector('p').textContent = body;
+
+                // Show toast message
+                showToast('Data updated successfully');
+            } else {
+                // Create a new card
+                var cardContainer = document.getElementById('cardContainer');
+
+                var card = document.createElement('div');
+                card.classList.add('card');
+
+                var cardIcons = document.createElement('div');
+                cardIcons.classList.add('card-icons');
+
+                var updateIcon = document.createElement('i');
+                updateIcon.classList.add('bx', 'bx-edit', 'card-icon');
+                updateIcon.setAttribute('title', 'Update');
+                updateIcon.addEventListener('click', handleUpdate);
+
+                var deleteIcon = document.createElement('i');
+                deleteIcon.classList.add('bx', 'bx-trash', 'card-icon');
+                deleteIcon.setAttribute('title', 'Delete');
+                deleteIcon.addEventListener('click', handleDelete);
+
+                cardIcons.appendChild(updateIcon);
+                cardIcons.appendChild(deleteIcon);
+
+                var titleElement = document.createElement('h4');
+                titleElement.textContent = title;
+
+                var bodyElement = document.createElement('p');
+                bodyElement.textContent = body;
+
+                card.appendChild(cardIcons);
+                card.appendChild(titleElement);
+                card.appendChild(bodyElement);
+
+                cardContainer.appendChild(card);
+
+                // Show toast message
+                showToast('Data added successfully');
+            }
+
+            // Close the modal after submission
+            closeModal();
+        }
+
+        function resetForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('body').value = '';
+            currentCard = null; // Reset the currentCard variable
+        }
+
+        fetch("https://jsonplaceholder.typicode.com/posts")
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                var cardContainer = document.getElementById('cardContainer');
+
+                data.forEach((post) => {
+                    var card = document.createElement('div');
+                    card.classList.add('card');
+
+                    var cardIcons = document.createElement('div');
+                    cardIcons.classList.add('card-icons');
+
+                    var updateIcon = document.createElement('i');
+                    updateIcon.classList.add('bx', 'bx-edit', 'card-icon');
+                    updateIcon.setAttribute('title', 'Update');
+                    updateIcon.addEventListener('click', handleUpdate);
+
+                    var deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('bx', 'bx-trash', 'card-icon');
+                    deleteIcon.setAttribute('title', 'Delete');
+                    deleteIcon.addEventListener('click', handleDelete);
+
+                    cardIcons.appendChild(updateIcon);
+                    cardIcons.appendChild(deleteIcon);
+
+                    var titleElement = document.createElement('h4');
+                    titleElement.textContent = post.title;
+
+                    var bodyElement = document.createElement('p');
+                    bodyElement.textContent = post.body;
+
+                    card.appendChild(cardIcons);
+                    card.appendChild(titleElement);
+                    card.appendChild(bodyElement);
+
+                    cardContainer.appendChild(card);
+                });
+            })
+            .catch((error) => console.error("Can't fetch data"));
+    </script>
+</body>
+
+</html>
