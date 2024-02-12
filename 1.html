@@ -122,19 +122,21 @@
 
     <div id="cardContainer"></div>
 
-    <div class="modal" id="myModal">
-        <div class="modal-content">
-            <h2 class="heading">Create Post</h2>
-            <label for="title" class="field">Title:</label>
-            <input type="text" id="title" name="title" placeholder="Enter title">
+    <form onsubmit="return submitData(event)">
+        <div class="modal" id="myModal">
+            <div class="modal-content">
+                <h2 class="heading">Create Post</h2>
+                <label for="title" class="field">Title:</label>
+                <input type="text" required id="title" name="title" placeholder="Enter title">
 
-            <label for="body" class="field">Body:</label>
-            <textarea id="body" name="body" rows="8" placeholder="Enter body"></textarea>
+                <label for="body" class="field">Body:</label>
+                <textarea id="body" required name="body" rows="8" placeholder="Enter body"></textarea>
 
-            <button class="modal-close" type="button" onclick="closeModal()">Close</button>
-            <button class="modal-submit" type="button" onclick="submitData()">Submit</button>
+                <button class="modal-close" type="button" onclick="closeModal()">Close</button>
+                <button class="modal-submit" type="submit">Submit</button>
+            </div>
         </div>
-    </div>
+    </form>
 
     <script>
         let currentCard; // To store the card being updated
@@ -156,7 +158,6 @@
         }
 
         function handleDelete(event) {
-            console.log('Delete clicked');
             var card = event.target.closest('.card');
 
             // Show confirmation alert
@@ -172,14 +173,20 @@
 
         function showToast(message) {
             var toast = document.createElement('div');
+            toast.style.position = "fixed";
+            toast.style.zIndex = 999;
+            toast.style.top = "2%"
+            toast.style.right = "2%";
+            toast.style.color = "white";
+            toast.style.background = "green";
+            toast.style.borderRadius = "5px";
+            toast.style.padding = "15px";
             toast.classList.add('toast');
             toast.textContent = message;
             document.body.appendChild(toast);
-
-            // Remove the toast after 3 seconds
             setTimeout(function () {
                 toast.remove();
-            }, 3000);
+            }, 5000);
         }
 
         function openModal() {
@@ -193,9 +200,11 @@
             resetForm();
         }
 
-        function submitData() {
+        function submitData(event) {
+            debugger
             var title = document.getElementById('title').value;
             var body = document.getElementById('body').value;
+            event.preventDefault()
 
             if (currentCard) {
                 // Update existing card
